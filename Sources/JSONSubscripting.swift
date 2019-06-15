@@ -181,6 +181,15 @@ extension JSON {
     public func getBool(at path: JSONPathType...) throws -> Bool {
         return try Bool(json: value(at: path))
     }
+	
+	/// Retrieves a raw JSON from a path.
+	/// - parameter path: 0 or more `String` or `Int` that subscript the `JSON`
+	/// - returns: The nested JSON
+	/// - throws: One of the `JSON.Error` cases thrown by `decode(at:type:)`.
+	/// - seealso: `JSON.decode(at:type:)`
+	public func getValue(at path: JSONPathType...) throws -> JSON {
+		return try value(at: path)
+	}
 
     /// Retrieves a `[JSON]` from a path into JSON.
     /// - parameter path: 0 or more `String` or `Int` that subscript the `JSON`
@@ -369,7 +378,30 @@ extension JSON {
     public func getBool(at path: JSONPathType..., alongPath options: SubscriptingOptions) throws -> Bool? {
         return try mapOptional(at: path, alongPath: options, transform: Bool.init)
     }
-
+	
+	/// Optionally retrieves a nested JSON from a path into JSON.
+	/// - parameter path: 0 or more `String` or `Int` that subscript the `JSON`
+	/// - parameter alongPath: Options that control what should be done with values that are `null` or keys that are missing.
+	/// - returns: The nested JSON if a value could be found, otherwise `nil`.
+	/// - throws: One of the following errors contained in `JSON.Error`:
+	///   * `KeyNotFound`: A key `path` does not exist inside a descendant
+	///     `JSON` dictionary.
+	///   * `IndexOutOfBounds`: An index `path` is outside the bounds of a
+	///     descendant `JSON` array.
+	///   * `UnexpectedSubscript`: A `path` item cannot be used with the
+	///     corresponding `JSON` value.
+	///   * `TypeNotConvertible`: The target value's type inside of the `JSON`
+	///     instance does not match the decoded value.
+	public func getValue(at path: JSONPathType..., alongPath options: SubscriptingOptions) throws -> JSON? {
+		let json = try mapOptional(at: path, alongPath: options, transform: { $0 })
+		
+		if options.contains(.nullBecomesNil) && json == .null {
+			return nil
+		}
+		
+		return json
+	}
+	
     /// Optionally retrieves a `[JSON]` from a path into the recieving structure.
     /// - parameter path: 0 or more `String` or `Int` that subscript the `JSON`
     /// - parameter alongPath: Options that control what should be done with values that are `null` or keys that are missing.
