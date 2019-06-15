@@ -190,7 +190,11 @@ extension JSON {
 	public func getValue(at path: JSONPathType...) throws -> JSON {
 		return try value(at: path)
 	}
-
+	
+	public func getValue(at path: [JSONPathType]) throws -> JSON {
+		return try value(at: path)
+	}
+	
     /// Retrieves a `[JSON]` from a path into JSON.
     /// - parameter path: 0 or more `String` or `Int` that subscript the `JSON`
     /// - returns: An `Array` of `JSON` elements
@@ -393,6 +397,10 @@ extension JSON {
 	///   * `TypeNotConvertible`: The target value's type inside of the `JSON`
 	///     instance does not match the decoded value.
 	public func getValue(at path: JSONPathType..., alongPath options: SubscriptingOptions) throws -> JSON? {
+		return try getValue(at: path, alongPath: options)
+	}
+	
+	public func getValue(at path: [JSONPathType], alongPath options: SubscriptingOptions) throws -> JSON? {
 		let json = try mapOptional(at: path, alongPath: options, transform: { $0 })
 		
 		if options.contains(.nullBecomesNil) && json == .null {
