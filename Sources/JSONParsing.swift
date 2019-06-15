@@ -25,12 +25,12 @@ extension JSON {
 
     /// Create `JSON` from UTF-8 `data`. By default, parses using the
     /// Swift-native `JSONParser` backend.
-    public init(data: Data, usingParser parser: JSONParserType.Type = JSONParser.self) throws {
+    public init(data: Data, usingParser parser: JSONParserType.Type = JSONSerialization.self) throws {
         self = try parser.createJSON(from: data)
     }
 
     /// Create `JSON` from UTF-8 `string`.
-    public init(jsonString: Swift.String, usingParser parser: JSONParserType.Type = JSONParser.self) throws {
+    public init(jsonString: Swift.String, usingParser parser: JSONParserType.Type = JSONSerialization.self) throws {
         self = try parser.createJSON(from: jsonString.data(using: Swift.String.Encoding.utf8) ?? Data())
     }
 }
