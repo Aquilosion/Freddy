@@ -55,22 +55,20 @@ extension JSONSerialization: JSONParserType {
     /// - parameter object: The instance of `Any` returned from serializing the JSON.
     /// - returns: An instance of `JSON` matching the JSON given to the function.
     public static func makeJSON(with object: Any) -> JSON {
-        #if !swift(>=3.2) && (os(macOS) || os(iOS) || os(macOS) || os(tvOS))
-            if let n = object as? NSNumber {
-                let numberType = CFNumberGetType(n)
-                switch numberType {
-                case .charType:
-                    return .bool(n.boolValue)
+		if let n = object as? NSNumber {
+			let numberType = CFNumberGetType(n)
+			switch numberType {
+			case .charType:
+				return .bool(n.boolValue)
 
-                case .shortType, .intType, .longType, .cfIndexType, .nsIntegerType, .sInt8Type, .sInt16Type, .sInt32Type:
-                    return .int(n.intValue)
+			case .shortType, .intType, .longType, .cfIndexType, .nsIntegerType, .sInt8Type, .sInt16Type, .sInt32Type:
+				return .int(n.intValue)
 
-                default:
-                    return .double(n.doubleValue)
-                }
-            }
-        #endif
-
+			default:
+				return .double(n.doubleValue)
+			}
+		}
+		
         switch object {
         case let n as Bool:
             return .bool(n)
