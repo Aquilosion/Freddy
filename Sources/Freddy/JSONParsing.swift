@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import CoreFoundation
 
 // MARK: - Deserialize JSON
 
@@ -56,8 +57,14 @@ extension JSONSerialization: JSONParserType {
     /// - returns: An instance of `JSON` matching the JSON given to the function.
     public static func makeJSON(with object: Any) -> JSON {
 		if let n = object as? NSNumber {
-			if let bool = Bool(exactly: n) {
-				return .bool(bool)
+			func isBoolNumber(num:NSNumber) -> Bool {
+				let boolID = CFBooleanGetTypeID()
+				let numID = CFGetTypeID(num)
+				return numID == boolID
+			}
+			
+			if isBoolNumber(num: n) {
+				return .bool(Bool(truncating: n))
 			} else if let int = Int(exactly: n) {
 				return .int(int)
 			} else {
