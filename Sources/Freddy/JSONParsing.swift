@@ -56,16 +56,12 @@ extension JSONSerialization: JSONParserType {
     /// - returns: An instance of `JSON` matching the JSON given to the function.
     public static func makeJSON(with object: Any) -> JSON {
 		if let n = object as? NSNumber {
-			let numberType = CFNumberGetType(n)
-			switch numberType {
-			case .charType:
-				return .bool(n.boolValue)
-
-			case .shortType, .intType, .longType, .cfIndexType, .nsIntegerType, .sInt8Type, .sInt16Type, .sInt32Type:
-				return .int(n.intValue)
-
-			default:
-				return .double(n.doubleValue)
+			if let bool = Bool(exactly: n) {
+				return .bool(bool)
+			} else if let int = Int(exactly: n) {
+				return .int(int)
+			} else {
+				return .double(Double(truncating: n))
 			}
 		}
 		
